@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I Love You</title>
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #1a001a;
+  overflow: hidden;
+  font-family: 'Courier New', monospace;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.text {
+  position: absolute;
+  color: #ff69b4;
+  font-size: 14px;
+  white-space: nowrap;
+  text-shadow: 0 0 4px #ff69b4;
+  animation: floatUp linear infinite;
+}
+
+/* Floating upwards with gentle sway */
+@keyframes floatUp {
+  0% {
+    transform: translate(var(--sway-start,0px), 100vh) rotate(var(--rotate,0deg)) scale(var(--scale,1));
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(var(--sway-mid,0px), 50vh) rotate(calc(var(--rotate,0deg) + 2deg)) scale(var(--scale,1.05));
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--sway-end,0px), -20px) rotate(calc(var(--rotate,0deg) + 5deg)) scale(var(--scale,1));
+    opacity: 0;
+  }
+}
+
+#clickHint {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 12px;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 1s;
+}
+</style>
+</head>
+<body>
+
+<audio id="bgMusic" loop>
+  <source src="hindi ako.mp3" type="audio/mpeg">
+</audio>
+
+<div id="clickHint">Click anywhere to play music 🎵</div>
+<div class="container" id="container"></div>
+
+<script>
+const container = document.getElementById("container");
+const music = document.getElementById("bgMusic");
+const clickHint = document.getElementById("clickHint");
+
+let started = false;
+window.addEventListener("load", () => clickHint.style.opacity = 1);
+
+document.addEventListener("click", () => {
+  if (!started) {
+    music.play().catch(()=>{});
+    started = true;
+    clickHint.style.display = "none";
+  }
+});
+
+// ================= CREATE FLOATING PETALS =================
+function createLoveTexts() {
+  container.innerHTML = "";
+
+  const text = "I love you";
+  const fontSize = 14;
+  const cols = Math.ceil(window.innerWidth / 80);
+  const rows = Math.ceil(window.innerHeight / 40);
+
+  for (let i = 0; i < rows * cols; i++) {
+    const span = document.createElement("span");
+    span.className = "text";
+    span.innerText = text;
+    span.style.fontSize = fontSize + "px";
+
+    // Random start position
+    const startX = Math.random() * window.innerWidth;
+    span.style.setProperty('--sway-start', startX + 'px');
+
+    // Random horizontal sway
+    const swayX = startX + (Math.random() * 50 - 25);
+    span.style.setProperty('--sway-mid', swayX + 'px');
+
+    const endX = startX + (Math.random() * 40 - 20);
+    span.style.setProperty('--sway-end', endX + 'px');
+
+    // Random rotation and scale
+    span.style.setProperty('--rotate', (Math.random() * 20 - 10) + 'deg');
+    span.style.setProperty('--scale', (0.8 + Math.random() * 0.4));
+
+    // Random animation duration and delay
+    const duration = 15 + Math.random() * 10; // 15-25s
+    const delay = Math.random() * 10;
+    span.style.animationDuration = duration + 's';
+    span.style.animationDelay = delay + 's';
+
+    container.appendChild(span);
+  }
+}
+
+// Rebuild grid on resize
+window.addEventListener("resize", () => createLoveTexts());
+
+createLoveTexts();
+</script>
+</body>
+</html>
